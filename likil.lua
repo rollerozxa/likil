@@ -47,6 +47,12 @@ for filename in dirtree('pages/') do
 	file_write('.output/'..site.page_base..name, output)
 end
 
+file_write('.output/404.html', layout{
+	site = site,
+	title = '404',
+	content = "<p>This page couldn't be found. Maybe it was removed, or it hasn't been written yet, or you've received a broken link.</p>"
+}, "w")
+
 for filename, mode in dirtree('static/') do
 	local name = filename:gsub('static/', '')
 

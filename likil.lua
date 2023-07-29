@@ -53,8 +53,13 @@ for filename, mode in dirtree('static/') do
 	if mode.mode == "directory" then
 		lfs.mkdir('.output/'..name)
 	else
-		local content = file_get_contents(filename, "rb")
-		print('Copying static file: '..name)
-		file_write('.output/'..name, content, "wb")
+		if name:endswith('.scss') then
+			-- Compile SCSS stylesheets
+			os.execute('sassc --style compressed '..filename..' .output/'..name:gsub('.scss', '.css'))
+		else
+			local content = file_get_contents(filename, "rb")
+			print('Copying static file: '..name)
+			file_write('.output/'..name, content, "wb")
+		end
 	end
 end

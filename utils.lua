@@ -34,3 +34,24 @@ function file_write(filename, content, mode)
 	file:write(content)
 	file:close()
 end
+
+function string:endswith(suffix)
+    return self:sub(-#suffix) == suffix
+end
+
+Buffer = {}
+function Buffer.new(self, o)
+	o = o or {}
+	setmetatable(o, self)
+	self.__index = self
+	self.buffer = {}
+	return o
+end
+
+function Buffer:write(text, ...)
+	table.insert(self.buffer, string.format(text, ...))
+end
+
+function Buffer:output()
+	return table.concat(self.buffer, "")
+end

@@ -12,38 +12,39 @@ lfs.chdir('vmc/')
 
 local site = require('config')
 
+require('templates')
+
 local layout = molde.loadfile('layout.html')
 
 lfs.mkdir('.output/')
+if site.page_base then
+	lfs.mkdir('.output/'..site.page_base)
+else
+	site.page_base = ''
+end
+
+local opts = { }
+local markdownify = lunamark.reader.new(lunamark.writer.new(opts), opts)
 
 for filename in dirtree('pages/') do
-	local content = file_get_contents(filename)
-
-	local name = filename:gsub('pages/', ''):gsub('.md', '.html')
+	local name = filename:gsub('pages/', ''):gsub('.md', '.html'):gsub('.lua', '.html')
 	local title = name:gsub('.html', ''):gsub('_', ' ')
 
 	print('Processing file: '..name)
 
-	local opts = { }
-	local parse = lunamark.reader.new(lunamark.writer.new(opts), opts)
+	if filename:endswith('.md') then
+		content = markdownify(molde.loadfile(filename)().."\n\n")
+	elseif filename:endswith('.lua') then
+		content = dofile(filename)
+	end
 
 	local output = layout{
 		site = site,
 		title = title,
-		content = parse(content)
+		content = content
 	}
 
-	file_write('.output/'..name, output)
-end
-
-local function rur(filename)
-	local content = file_get_contents(filename, "rb")
-
-	local name = filename:gsub('static/', '')
-
-	print('Copying static file: '..name)
-
-	file_write('.output/'..name, content, "wb")
+	file_write('.output/'..site.page_base..name, output)
 end
 
 for filename, mode in dirtree('static/') do

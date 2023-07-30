@@ -32,6 +32,28 @@ end
 local opts = { }
 local markdownify = lunamark.reader.new(lunamark.writer.new(opts), opts)
 
+-- Get pagelist
+pagelist = {}
+for filename, mode in dirtree('pages/') do
+	if mode.mode == "file" then
+		local name = filename:gsub('pages/', ''):gsub('.md', '.html'):gsub('.lua', '.html')
+		local title = name:gsub('.html', ''):gsub('_', ' ')
+
+		if title == "index" then
+			title = site.title
+		end
+
+		table.insert(pagelist, {
+			name = name,
+			title = title
+		})
+	end
+end
+
+table.sort(pagelist, function(a, b)
+	return a.title < b.title
+end)
+
 for filename, mode in dirtree('pages/') do
 	local name = filename:gsub('pages/', ''):gsub('.md', '.html'):gsub('.lua', '.html')
 	local title = name:gsub('.html', ''):gsub('_', ' ')

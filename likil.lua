@@ -21,8 +21,8 @@ require('templates')
 
 local layout = molde.loadfile('layout.html')
 
-cleardir('.output/')
 lfs.mkdir('.output/')
+cleardir('.output/')
 if site.page_base then
 	lfs.mkdir('.output/'..site.page_base)
 else

@@ -43,10 +43,12 @@ for filename, mode in dirtree('pages/') do
 			title = site.title
 		end
 
-		table.insert(pagelist, {
-			name = name,
-			title = title
-		})
+		if not site.hidden[title] then
+			table.insert(pagelist, {
+				name = name,
+				title = title
+			})
+		end
 	end
 end
 

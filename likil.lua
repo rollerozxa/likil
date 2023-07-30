@@ -1,14 +1,19 @@
--- UwU
+#!/usr/bin/luajit
 
 require('lfs')
-lfs.chdir('../')
+
+-- path wrangling bootstrapper
+local origindir = lfs.currentdir()
+local scriptdir = debug.getinfo(1).source:match("@?(.*/)")
+
+lfs.chdir(scriptdir)
 local lunamark = {
 	writer = require('lunamark.writer.html'),
 	reader = require('lunamark.reader.markdown')
 }
 local molde = require('molde.molde')
 require('utils')
-lfs.chdir('vmc/')
+lfs.chdir(origindir)
 
 local site = require('config')
 

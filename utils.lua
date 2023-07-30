@@ -21,6 +21,24 @@ function dirtree(dir)
 	return coroutine.wrap(function() yieldtree(dir) end)
 end
 
+function cleardir(dir)
+    for file in lfs.dir(dir) do
+        local file_path = dir..'/'..file
+        if file ~= "." and file ~= ".." then
+            if lfs.attributes(file_path, 'mode') == 'file' then
+                os.remove(file_path)
+            elseif lfs.attributes(file_path, 'mode') == 'directory' then
+                cleardir(file_path)
+            end
+        end
+    end
+	if dir ~= ".output/" then
+		lfs.rmdir(dir)
+	else
+		print('remove dir', dir)
+	end
+end
+
 function file_get_contents(filename, mode)
 	local file = io.open(filename, mode or "r")
 	local content = file:read("a")
